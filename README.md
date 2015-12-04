@@ -1,0 +1,5 @@
+##lr_automatic_tool##
+lr_autmatic_tool根据配置自动运行loadrunner场景任务，任务结束后自动运行结果分析，后续将loadrunner的分析结果进行二次分析，提取到自定义的HTML报告中，最终上传到指定的目录中
+
+
+
