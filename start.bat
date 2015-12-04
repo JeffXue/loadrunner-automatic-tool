@@ -1,26 +1,26 @@
 @echo off
-rem ÏîÄ¿Ãû³ÆÄ¬ÈÏÊ¹ÓÃydh
+rem é¡¹ç›®åç§°
 set project_name=test
 
-rem ²âÊÔ°æ±¾+ÂÖ´Î
+rem æµ‹è¯•ç‰ˆæœ¬+è½®æ¬¡
 set project_version=V1.0.0Round1
 
-rem ²âÊÔ³¡¾°Ãû³Æ£¬²»Ğè´øºó×º
+rem æµ‹è¯•åœºæ™¯åç§°ï¼Œä¸éœ€å¸¦åç¼€
 set scenario_name=api
 
-rem loadrunner½Å±¾ÀàĞÍ£¬0 £ºCÓïÑÔ±àĞ´  1 £ºµ÷Jar°üÊµÏÖ
+rem loadrunnerè„šæœ¬ç±»å‹ï¼Œ0 ï¼šCè¯­è¨€ç¼–å†™  1 ï¼šè°ƒJaråŒ…å®ç°
 set lr_type=0
 
-rem ÉèÖÃloadrunner binÂ·¾¶
+rem è®¾ç½®loadrunner binè·¯å¾„
 set lr_path="C:\Program Files (x86)\HP\LoadRunner\bin"
 
-rem ÉèÖÃ¹¤×÷Ä¿Â¼£¬½áÎ²²»ĞèÒª´øÉÏ\
+rem è®¾ç½®å·¥ä½œç›®å½•ï¼Œç»“å°¾ä¸éœ€è¦å¸¦ä¸Š\
 set workspace="D:\LoadRunnerWorkStation"
 
-rem ¸ù¾İÅäÖÃÉú³ÉÔËĞĞLoadRunnerÅú´¦ÀíÎÄ¼ş
+rem æ ¹æ®é…ç½®ç”Ÿæˆè¿è¡ŒLoadRunneræ‰¹å¤„ç†æ–‡ä»¶
 python generate_lr_bat.py %project_name% %scenario_name% %project_version% %lr_type% %lr_path% %workspace%
 
-rem ÔËĞĞÅú´¦ÀíÎÄ¼ş
+rem è¿è¡Œæ‰¹å¤„ç†æ–‡ä»¶
 run_lr.bat
 
 pause
