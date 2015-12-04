@@ -47,6 +47,7 @@ class LRReport():
         config = ConfigParser.ConfigParser()
         with open(self.config_file, "r") as cfg_file:
             config.readfp(cfg_file)
+        self.ftp_conf.setdefault("flag", int(config.get("ftp", "flag")))
         self.ftp_conf.setdefault("ip", config.get("ftp", "ip"))
         self.ftp_conf.setdefault("user", config.get("ftp", "user"))
         self.ftp_conf.setdefault("password", config.get("ftp", "password"))
@@ -224,7 +225,8 @@ class LRReport():
         self.set_file_name()
         self.generate_html_report()
         self.package_files()
-        self.ftp_upload()
+        if self.ftp_conf.get('flag'):
+            self.ftp_upload()
 
 
 class LRJavaVuserReport(LRReport):
