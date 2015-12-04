@@ -104,7 +104,7 @@ report_trs_image = """
 
 report_tps_table_header = """
     <p><strong>每秒处理事务汇总(TPS)</strong></p>
-    <table border="0" cellpadding="5" cellspacing="2"  width="60%%">
+    <table border="0" cellpadding="5" cellspacing="2"  width="60%">
     <tr>
         <th>事务名称</th>
         <th>每秒处理事务平均数</th>
@@ -127,7 +127,7 @@ report_tps_image = """
 
 report_http_table_header = """
     <p><strong>HTTP响应汇总</strong></p>
-    <table border="0" cellpadding="5" cellspacing="2"  width="60%%">
+    <table border="0" cellpadding="5" cellspacing="2"  width="60%">
     <tr>
         <th>HTTP状态码</th>
         <th>总数量</th>
