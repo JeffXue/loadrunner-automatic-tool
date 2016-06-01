@@ -7,19 +7,13 @@ from ftplib import FTP
 import util
 import Parser
 
-from template import report_html_header
-from template import report_summary_table
-from template import report_trs_table_header
-from template import report_trs_table_body
-from template import report_trs_image
-from template import report_tps_table_header
-from template import report_tps_table_body
-from template import report_tps_image
-from template import report_http_table_header
-from template import report_http_table_body
-from template import report_html_end
+from jinja2 import Environment, FileSystemLoader
 
-class LRReport():
+env = Environment(loader=FileSystemLoader('./templates'))
+template = env.get_template('report.html')
+
+
+class LRReport:
 
     build_id = ""
     datafile_prefix = ""
@@ -42,7 +36,7 @@ class LRReport():
 
     def get_conf(self):
         """
-        get the email configuration from ini file
+        get configuration from ini file
         """
         config = ConfigParser.ConfigParser()
         with open(self.config_file, "r") as cfg_file:
@@ -54,9 +48,7 @@ class LRReport():
 
     def set_file_name(self):
         time_stamp = self.build_id
-        self.report_file = (self.result_dir + "\\"
-                            + self.datafile_prefix +
-                            "_lr_statistical_data_" + time_stamp + ".html")
+        self.report_file = (self.result_dir + "\\" + self.datafile_prefix + "_lr_" + time_stamp + ".html")
         self.package_file = self.report_file.split(".html")[0] + ".zip"
         self.session_dir = self.result_dir + "\\" + "An_Session1"
 
@@ -95,62 +87,27 @@ class LRReport():
         else:
             print "[ERROR]can not find Report5.html in lr report directory"
 
-        statistics_msg = report_summary_table % (
-                summary_data.get("header_timerange").split("Period:")[1],
-                runner_user_hyper_link, 
-                summary_data.get("maximum_runner_vuser"),
-                summary_data.get("total_throughput"),
-                summary_data.get("average_throughput"),
-                summary_data.get("total_hits"),
-                hits_per_second_hyper_link,
-                summary_data.get("average_hits"))
+        passed = float(summary_data.get("total_passed").replace(",", "").split(":")[1])
+        failed = float(summary_data.get("total_failed").replace(",", "").split(":")[1])
+        total = passed + failed
+        success_rate = "%0.2f" % (passed * 100 / total)
+        print str(success_rate)
 
-        success_rate = "%0.2f" % \
-                       (float(summary_data.get("total_passed").replace(",", "").split(":")[1]) *
-                        100 /
-                        (float(summary_data.get("total_passed").replace(",", "").split(":")[1])
-                         + float(summary_data.get("total_failed").replace(",", "").split(":")[1])))
+        msg = template.render(summary_data=summary_data, tps_data=tps_data,
+                              runner_user_hyper_link=runner_user_hyper_link,
+                              hits_per_second_hyper_link=hits_per_second_hyper_link,
+                              response_time_hyper_link=response_time_hyper_link,
+                              tps_hyper_link=tps_hyper_link,
+                              success_rate=str(success_rate),
+                              not_java_script=True)
 
-        transaction_trs_msg = report_trs_table_header % (
-                summary_data.get("total_passed").split(":")[1],
-                summary_data.get("total_failed").split(":")[1],
-                summary_data.get("total_stopped").split(":")[1],
-                str(success_rate))
-
-        for i in xrange(len(summary_data.get("trs"))):
-            transaction_trs_sub_msg = report_trs_table_body % (summary_data.get("trs")[i][0],
-                   summary_data.get("trs")[i][1],
-                   summary_data.get("trs")[i][2],
-                   summary_data.get("trs")[i][3],
-                   summary_data.get("trs")[i][4],
-                   summary_data.get("trs")[i][5],
-                   summary_data.get("trs")[i][6],
-                   summary_data.get("trs")[i][7])
-            transaction_trs_msg += transaction_trs_sub_msg
-        transaction_trs_msg += report_trs_image  % response_time_hyper_link
-
-        transaction_tps_msg = report_tps_table_header
-        for i in xrange(len(tps_data.get("tps"))-1):
-            transaction_tps_sub_msg = report_tps_table_body  % (
-                    tps_data.get("tps")[i+1][1], tps_data.get("tps")[i+1][3])
-            transaction_tps_msg += transaction_tps_sub_msg
-        transaction_tps_msg += report_tps_image % tps_hyper_link
-        http_reponse_msg = report_http_table_header
-        for i in xrange(len(summary_data.get("http"))):
-            http_reponse_sub_msg = report_http_table_body % (
-                    summary_data.get("http")[i][0],
-                    summary_data.get("http")[i][1],
-                    summary_data.get("http")[i][2])
-            http_reponse_msg += http_reponse_sub_msg
-        msg = (report_html_header + statistics_msg + transaction_trs_msg + transaction_tps_msg +
-               http_reponse_msg + report_html_end)
         return msg
 
     def generate_html_report(self):
         html_report = self.get_html_msg()
         f = open(self.report_file, "a+")
         try:
-            f.write(html_report)
+            f.write(html_report.encode('utf-8'))
         finally:
             f.close()
 
@@ -264,44 +221,16 @@ class LRJavaVuserReport(LRReport):
         else:
             print "[ERROR]can not find Report3.html in lr report directory"
 
-        statistics_msg = report_summary_java_table % (
-                summary_data.get("header_timerange").split("Period:")[1],
-                runner_user_hyper_link,
-                summary_data.get("maximum_runner_vuser"))
+        passed = float(summary_data.get("total_passed").replace(",", "").split(":")[1])
+        failed = float(summary_data.get("total_failed").replace(",", "").split(":")[1])
+        total = passed + failed
+        success_rate = "%0.2f" % (passed * 100 / total)
 
-        success_rate = "%0.2f" % \
-                       (float(summary_data.get("total_passed").replace(",", "").split(":")[1]) *
-                        100 /
-                        (float(summary_data.get("total_passed").replace(",", "").split(":")[1])
-                         + float(summary_data.get("total_failed").replace(",", "").split(":")[1])))
-        transaction_trs_msg = report_trs_table_header % (
-                summary_data.get("total_passed").split(":")[1],
-                summary_data.get("total_failed").split(":")[1],
-                summary_data.get("total_stopped").split(":")[1],
-                str(success_rate))
-
-        for i in xrange(len(summary_data.get("trs"))):
-            transaction_trs_sub_msg = report_trs_table_body % (
-                    summary_data.get("trs")[i][0],
-                    summary_data.get("trs")[i][1],
-                    summary_data.get("trs")[i][2],
-                    summary_data.get("trs")[i][3],
-                    summary_data.get("trs")[i][4],
-                    summary_data.get("trs")[i][5],
-                    summary_data.get("trs")[i][6],
-                    summary_data.get("trs")[i][7])
-            transaction_trs_msg += transaction_trs_sub_msg
-        transaction_trs_msg += report_trs_image % response_time_hyper_link
-
-        transaction_tps_msg = report_tps_table_header
-
-        for i in xrange(len(tps_data.get("tps"))-1):
-            transaction_tps_sub_msg = report_tps_table_body % (
-                    tps_data.get("tps")[i+1][1],
-                    tps_data.get("tps")[i+1][3])
-            transaction_tps_msg += transaction_tps_sub_msg
-        transaction_tps_msg += report_tps_image  % tps_hyper_link
-
-        msg = (report_html_header + statistics_msg + transaction_trs_msg + transaction_tps_msg + report_html_end)
+        msg = template.render(summary_data=summary_data, tps_data=tps_data,
+                              runner_user_hyper_link=runner_user_hyper_link,
+                              response_time_hyper_link=response_time_hyper_link,
+                              tps_hyper_link=tps_hyper_link,
+                              success_rate=str(success_rate),
+                              not_java_script=False)
         return msg
 

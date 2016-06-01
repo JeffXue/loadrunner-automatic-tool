@@ -6,7 +6,7 @@ import report
 
 def main():
     parameter_lists = util.get_parameter_lists(sys.argv)
-	
+
     if len(parameter_lists) == 3:
         result_dit = parameter_lists[0]
         prefix = parameter_lists[1]

@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block content %}
+<body>
+<div align="center">
+  <p><strong>LR统计数据汇总</strong></p>
+  {% if not_java_script %}
+  <table class="bordered">
+    <tr>
+      <th>测试时间段</th>
+      <td>{{ summary_data['header_timerange'].split("Period:")[1] }}</td>
+    </tr>
+    <tr>
+      <th><a href="{{ runner_user_hyper_link }}" target="_png">并发虚拟用户数</a></th>
+      <td>{{ summary_data['maximum_runner_vuser'] }}</td>
+    </tr>
+    <tr>
+      <th>总的吞吐量(字节)</th>
+      <td>{{ summary_data['total_throughput'] }}</td>
+    </tr>
+    <tr>
+      <th>平均吞吐量(字节/秒)</th>
+      <td>{{ summary_data['average_throughput'] }}</td>
+    </tr>
+    <tr>
+      <th>总的点击率</th>
+      <td>{{ summary_data['total_hits'] }}</td>
+    </tr>
+    <tr>
+      <th><a href="{{ hits_per_second_hyper_link }}" target="_png">点击率/秒</a></th>
+      <td>{{ summary_data['average_hits'] }}</td>
+    </tr>
+  </table>
+  {% else %}
+  <p><strong>LR统计数据汇总</strong></p>
+  <table class="bordered">
+    <tr>
+      <th>测试时间段</th>
+      <td>{{ summary_data['header_timerange'].split("Period:")[1] }}</td>
+    </tr>
+    <tr>
+      <th><a href="{{ runner_user_hyper_link }}">并发虚拟用户数</a></th>
+      <td>{{ summary_data['maximum_runner_vuser'] }}</td>
+    </tr>
+  </table>
+  {% endif %}
+
+  <p style="text-align:center"><strong>Total Passed: {{ summary_data['total_passed'].split(":")[1] }}     Total Failed: {{ summary_data['total_failed'].split(":")[1] }}   Total Stopped: {{ summary_data['total_stopped'].split(":")[1] }}   成功率: {{ success_rate }}%</strong></p>
+  <p><strong>事务响应时间汇总(Response Time)</strong></p>
+  <table class="bordered">
+    <tr>
+      <th>事务名称</th>
+      <th>最小响应时间</th>
+      <th>平均响应时间</th>
+      <th>最大响应时间</th>
+      <th>90%%响应时间</th>
+      <th>通过事务数</th>
+      <th>失败事务数</th>
+      <th>停止事务数</th>
+    </tr>
+    {% for trs in summary_data['trs'] %}
+    <tr>
+      <td>{{ trs[0] }}</td>
+      <td>{{ trs[1] }}</td>
+      <td>{{ trs[2] }}</td>
+      <td>{{ trs[3] }}</td>
+      <td>{{ trs[4] }}</td>
+      <td>{{ trs[5] }}</td>
+      <td>{{ trs[6] }}</td>
+      <td>{{ trs[7] }}</td>
+    </tr>
+    {% endfor %}
+    <tr>
+      <td colspan="8"><div align="center"><img src="{{ response_time_hyper_link }}"></div></td>
+    </tr>
+  </table>
+
+  <p><strong>每秒处理事务汇总(TPS)</strong></p>
+  <table class="bordered">
+    <tr>
+      <th>事务名称</th>
+      <th>每秒处理事务平均数</th>
+    </tr>
+    {% for tps in tps_data['tps'] %}
+    {% if not loop.first %}
+    <tr>
+      <td>{{ tps[1] }}</td>
+      <td>{{ tps[3] }}</td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+    <tr>
+      <td colspan="2"><div align="center"><img src="{{ tps_hyper_link }}" align="center"></div></td>
+    </tr>
+  </table>
+
+  {% if not_java_script %}
+  <p><strong>HTTP响应汇总</strong></p>
+  <table class="bordered">
+    <tr>
+      <th>HTTP状态码</th>
+      <th>总数量</th>
+      <th>每秒响应数量</th>
+    </tr>
+    {% for http in summary_data['http'] %}
+    <tr>
+      <td>{{ http[0] }}</td>
+      <td>{{ http[1] }}</td>
+      <td>{{ http[2] }}</td>
+    </tr>
+    {% endfor %}
+  </table>
+  {% endif %}
+
+</div>
+</body>
+{% endblock%}
