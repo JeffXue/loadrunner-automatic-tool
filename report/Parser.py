@@ -191,25 +191,25 @@ class LRParser(SGMLParser):
     def handle_data(self, data):
         if data.strip() != "":
             if self.header_timerange_flag:
-                self.data_dictionary.setdefault("header_timerange", data)
+                self.data_dictionary.setdefault("header_timerange", data.split("Period:")[1])
             if self.duration_flag:
                 self.data_dictionary.setdefault("duration", data)
             if self.maximum_running_vuser_flag:
                 self.data_dictionary.setdefault("maximum_runner_vuser", data)
             if self.total_throughput_flag:
-                self.data_dictionary.setdefault("total_throughput", data)
+                self.data_dictionary.setdefault("total_throughput", data.replace(',', ''))
             if self.average_throughput_flag:
-                self.data_dictionary.setdefault("average_throughput", data)
+                self.data_dictionary.setdefault("average_throughput", data.replace(',', ''))
             if self.total_hits_flag:
-                self.data_dictionary.setdefault("total_hits", data)
+                self.data_dictionary.setdefault("total_hits", data.replace(',', ''))
             if self.average_hits_flag:
-                self.data_dictionary.setdefault("average_hits", data)
+                self.data_dictionary.setdefault("average_hits", data.replace(',', ''))
             if self.transaction_total_passed_flag:
-                self.data_dictionary.setdefault("total_passed", data)
+                self.data_dictionary.setdefault("total_passed", data.split(":")[1].replace(',', ''))
             if self.transaction_total_failed_flag:
-                self.data_dictionary.setdefault("total_failed", data)
+                self.data_dictionary.setdefault("total_failed", data.split(":")[1].replace(',', ''))
             if self.transaction_total_stopped_flag:
-                self.data_dictionary.setdefault("total_stopped", data)
+                self.data_dictionary.setdefault("total_stopped", data.split(":")[1].replace(',', ''))
             if self.trs_name_flag:
                 self.data_dictionary.get("trs")[self.trs_name_count-1].append(data)
             if self.trs_minumum_flag:

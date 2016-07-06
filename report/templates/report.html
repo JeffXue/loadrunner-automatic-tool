@@ -8,7 +8,7 @@
   <table class="bordered">
     <tr>
       <th>测试时间段</th>
-      <td>{{ summary_data['header_timerange'].split("Period:")[1] }}</td>
+      <td>{{ summary_data['header_timerange'] }}</td>
     </tr>
     <tr>
       <th><a href="{{ runner_user_hyper_link }}" target="_png">并发虚拟用户数</a></th>
@@ -36,7 +36,7 @@
   <table class="bordered">
     <tr>
       <th>测试时间段</th>
-      <td>{{ summary_data['header_timerange'].split("Period:")[1] }}</td>
+      <td>{{ summary_data['header_timerange'] }}</td>
     </tr>
     <tr>
       <th><a href="{{ runner_user_hyper_link }}">并发虚拟用户数</a></th>
@@ -45,7 +45,7 @@
   </table>
   {% endif %}
 
-  <p style="text-align:center"><strong>Total Passed: {{ summary_data['total_passed'].split(":")[1] }}     Total Failed: {{ summary_data['total_failed'].split(":")[1] }}   Total Stopped: {{ summary_data['total_stopped'].split(":")[1] }}   成功率: {{ success_rate }}%</strong></p>
+  <p style="text-align:center"><strong>Total Passed: {{ summary_data['total_passed'] }}     Total Failed: {{ summary_data['total_failed'] }}   Total Stopped: {{ summary_data['total_stopped'] }}   成功率: {{ success_rate }}%</strong></p>
   <p><strong>事务响应时间汇总(Response Time)</strong></p>
   <table class="bordered">
     <tr>
@@ -53,7 +53,7 @@
       <th>最小响应时间</th>
       <th>平均响应时间</th>
       <th>最大响应时间</th>
-      <th>90%%响应时间</th>
+      <th>90%响应时间</th>
       <th>通过事务数</th>
       <th>失败事务数</th>
       <th>停止事务数</th>

@@ -6,7 +6,10 @@ import ConfigParser
 from ftplib import FTP
 import util
 import Parser
+import requests
+import json
 
+from pyexcel_xls import get_data
 from jinja2 import Environment, FileSystemLoader
 
 env = Environment(loader=FileSystemLoader('./templates'))
@@ -24,6 +27,11 @@ class LRReport:
     package_file = ""
     config_file = ""
     ftp_conf = {}
+    api_url = ""
+    api_flag = 0
+
+    # 用于上传数据
+    summary_data = {}
 
     def __init__(self, result_dir, prefix, build_id,
                  config_file="../conf/report.ini"):
@@ -45,6 +53,9 @@ class LRReport:
         self.ftp_conf.setdefault("ip", config.get("ftp", "ip"))
         self.ftp_conf.setdefault("user", config.get("ftp", "user"))
         self.ftp_conf.setdefault("password", config.get("ftp", "password"))
+        self.api_url = config.get("api", "url")
+        self.api_flag = int(config.get("api", "flag"))
+        self.api_monitor_type = config.get('api', 'type')
 
     def set_file_name(self):
         time_stamp = self.build_id
@@ -87,11 +98,10 @@ class LRReport:
         else:
             print "[ERROR]can not find Report5.html in lr report directory"
 
-        passed = float(summary_data.get("total_passed").replace(",", "").split(":")[1])
-        failed = float(summary_data.get("total_failed").replace(",", "").split(":")[1])
+        passed = float(summary_data.get("total_passed"))
+        failed = float(summary_data.get("total_failed"))
         total = passed + failed
         success_rate = "%0.2f" % (passed * 100 / total)
-        print str(success_rate)
 
         msg = template.render(summary_data=summary_data, tps_data=tps_data,
                               runner_user_hyper_link=runner_user_hyper_link,
@@ -100,6 +110,15 @@ class LRReport:
                               tps_hyper_link=tps_hyper_link,
                               success_rate=str(success_rate),
                               not_java_script=True)
+
+        # 保存数据用于后续上传
+
+        self.summary_data.update(summary_data)
+        tps_data['tps'].pop(0)
+        self.summary_data.update(tps_data)
+        self.summary_data['success_rate'] = str(success_rate)
+        self.summary_data['script_type'] = 0
+        self.summary_data['monitor_type'] = self.api_monitor_type
 
         return msg
 
@@ -110,6 +129,18 @@ class LRReport:
             f.write(html_report.encode('utf-8'))
         finally:
             f.close()
+
+    def get_trs_graph_data(self):
+        trs_xls = self.result_dir + "\\An_Report1\\Report4.xls"
+        origin_data = get_data(trs_xls)
+        origin_columns = origin_data
+        self.summary_data['trs_graph_data'] = origin_columns['Sheet1']
+
+    def get_tps_graph_data(self):
+        tps_xls = self.result_dir + "\\An_Report1\\Report5.xls"
+        origin_data = get_data(tps_xls)
+        origin_columns = origin_data
+        self.summary_data['tps_graph_data'] = origin_columns['Sheet1']
 
     def package_files(self):
         if not os.path.isdir(self.session_dir):
@@ -177,10 +208,21 @@ class LRReport:
         file_handler.close()
         ftp.quit()
 
+    def api_upload(self):
+        r = requests.post(self.api_url, json=json.dumps(self.summary_data))
+        if r.text == "200":
+            print "[INFO]api upload success"
+        else:
+            print "[ERROR]api upload failed"
+
     def work(self):
         self.get_conf()
         self.set_file_name()
         self.generate_html_report()
+        if self.api_flag:
+            self.get_tps_graph_data()
+            self.get_trs_graph_data()
+            self.api_upload()
         self.package_files()
         if self.ftp_conf.get('flag'):
             self.ftp_upload()
@@ -221,8 +263,8 @@ class LRJavaVuserReport(LRReport):
         else:
             print "[ERROR]can not find Report3.html in lr report directory"
 
-        passed = float(summary_data.get("total_passed").replace(",", "").split(":")[1])
-        failed = float(summary_data.get("total_failed").replace(",", "").split(":")[1])
+        passed = float(summary_data.get("total_passed"))
+        failed = float(summary_data.get("total_failed"))
         total = passed + failed
         success_rate = "%0.2f" % (passed * 100 / total)
 
@@ -232,5 +274,27 @@ class LRJavaVuserReport(LRReport):
                               tps_hyper_link=tps_hyper_link,
                               success_rate=str(success_rate),
                               not_java_script=False)
+
+        # 保存数据用于后续上传
+
+        self.summary_data.update(summary_data)
+        tps_data['tps'].pop(0)
+        self.summary_data.update(tps_data)
+        self.summary_data['success_rate'] = str(success_rate)
+        self.summary_data['script_type'] = 1
+        self.summary_data['monitor_type'] = self.api_monitor_type
+
         return msg
+
+    def get_trs_graph_data(self):
+        trs_xls = self.result_dir + "\\An_Report1\\Report2.xls"
+        origin_data = get_data(trs_xls)
+        origin_columns = origin_data
+        self.summary_data['trs_graph_data'] = origin_columns['Sheet1']
+
+    def get_tps_graph_data(self):
+        tps_xls = self.result_dir + "\\An_Report1\\Report3.xls"
+        origin_data = get_data(tps_xls)
+        origin_columns = origin_data
+        self.summary_data['tps_graph_data'] = origin_columns['Sheet1']
 

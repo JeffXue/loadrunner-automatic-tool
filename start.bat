@@ -3,10 +3,10 @@ rem 项目名称
 set project_name=test
 
 rem 测试版本+轮次
-set project_version=V1.0.0Round1
+set project_version=test
 
 rem 测试场景名称，不需带后缀
-set scenario_name=api
+set scenario_name=test
 
 rem loadrunner脚本类型，0 ：C语言编写  1 ：调Jar包实现
 set lr_type=0
@@ -24,4 +24,3 @@ rem 运行批处理文件
 run_lr.bat
 
 pause
-
