@@ -29,6 +29,7 @@ class LRReport:
     ftp_conf = {}
     api_url = ""
     api_flag = 0
+    api_monitor_type = ""
 
     # 用于上传数据
     summary_data = {}
