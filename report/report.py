@@ -213,7 +213,7 @@ class LRReport:
         if r.text == "200":
             print "[INFO]api upload success"
         else:
-            print "[ERROR]api upload failed"
+            print "[ERROR]api upload failed: " + r.text
 
     def work(self):
         self.get_conf()
