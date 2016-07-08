@@ -120,6 +120,9 @@ class LRReport:
         self.summary_data['success_rate'] = str(success_rate)
         self.summary_data['script_type'] = 0
         self.summary_data['monitor_type'] = self.api_monitor_type
+        self.summary_data['module'] = self.datafile_prefix.split('-')[0]
+        self.summary_data['version'] = self.datafile_prefix.split('-')[1]
+        self.summary_data['scenario_name'] = self.datafile_prefix.split('-')[2]
 
         return msg
 
