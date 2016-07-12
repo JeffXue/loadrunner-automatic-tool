@@ -221,11 +221,11 @@ class LRParser(SGMLParser):
             if self.trs_90percent_flag:
                 self.data_dictionary.get("trs")[self.trs_name_count-1].append(data)
             if self.trs_pass_flag:
-                self.data_dictionary.get("trs")[self.trs_name_count-1].append(data).replace(',', '')
+                self.data_dictionary.get("trs")[self.trs_name_count-1].append(data.replace(',', ''))
             if self.trs_fail_flag:
-                self.data_dictionary.get("trs")[self.trs_name_count-1].append(data).replace(',', '')
+                self.data_dictionary.get("trs")[self.trs_name_count-1].append(data.replace(',', ''))
             if self.trs_stop_flag:
-                self.data_dictionary.get("trs")[self.trs_name_count-1].append(data).replace(',', '')
+                self.data_dictionary.get("trs")[self.trs_name_count-1].append(data.replace(',', ''))
             if self.http_responses_flag:
                 self.data_dictionary.get("http")[self.http_responses_count-1].append(data)
             if self.http_total_flag:
