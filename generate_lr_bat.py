@@ -27,6 +27,8 @@ set lr_res="%(workspace)s\\res\\%(result_name)s"
 set lr_res_lrr="%(workspace)s\\res\\%(result_name)s\\%(result_name)s.lrr"
 set lr_res_template=spms_lr_report_template
 
+rd /s/q %lr_res%
+
 rem 移动到report目录中以运行后续脚本
 cd report
 
