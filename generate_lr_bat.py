@@ -22,7 +22,7 @@ template = """
 taskkill /f /im Wlrun.exe
 
 rem 设置LoadRunner运行配置参数
-set lr_scenario="%(workspace)s\\scenario\\%(scenario_name)s"
+set lr_scenario="%(workspace)s\\scenario\\%(project_name)\\%(scenario_name)s"
 set lr_res="%(workspace)s\\res\\%(result_name)s"
 set lr_res_lrr="%(workspace)s\\res\\%(result_name)s\\%(result_name)s.lrr"
 set lr_res_template=spms_lr_report_template
